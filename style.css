@@ -72,23 +72,23 @@ main { flex: 1; } /* Притискає футер до низу */
     box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Тінь */
     cursor: pointer;
 }
-.gallery-item img,
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+
 .gallery-item video {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ключове: відео заповнить квадрат і не розтягнеться */
+    /* contain означає "вмістити все відео в квадрат". 
+       З'являться чорні смуги, але кнопки стануть видимі */
+    object-fit: contain; 
+    background-color: #000; /* Чорний фон для смуг */
     display: block;
-}
-
-.gallery-item img {
-    /* Ті самі властивості для плавності, що ми додавали раніше */
-    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-.gallery-item video {
-    cursor: default; /* Або cursor: pointer, якщо хочете */
 }
 
 /* Ефект при наведенні */
