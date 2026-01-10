@@ -50,14 +50,19 @@
                         <li>🤝 Волонтерство та допомога громаді</li>
                     </ul>
                 </div>
-                <div class="about-images">
-                    <div class="gallery-item">
-                        <img src="res/image4.jpg" alt="Фото діяльності 1">
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <div>
+                        <img src="res/image4.jpg" data-full="res/image4.jpg" alt="Фото діяльності 1" class="gallery-item">
                     </div>
-                    <div class="gallery-item">
-                        <img src="res/image5.jpg" alt="Фото діяльності 2">
+                    <div>
+                        <img src="res/image5.jpg" data-full="res/image5.jpg" alt="Фото діяльності 2" class="gallery-item">
                     </div>
                 </div>
+                <div id="lightbox" class="lightbox">
+                <span class="close-btn">&times;</span>
+                <img class="lightbox-content" id="lightbox-img">
+                <div id="caption"></div> 
+            </div>
             </div>
 
             <h3>Структура куреня (Гуртки)</h3>
