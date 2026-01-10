@@ -337,3 +337,92 @@ main {
     list-style-position: outside;
     margin-bottom: 5px;
 }
+
+.menu-toggle {
+    display: none;
+    cursor: pointer;
+}
+
+.menu-toggle .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: var(--dark-text); /* Колір смужок */
+    transition: all 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    
+    .menu-toggle {
+        display: block; 
+    }
+    /* 1. Робимо текст заголовка меншим */
+    .hero-overlay h1 {
+        font-size: 2rem; /* Було 3rem, стало менше */
+    }
+    
+    .hero-overlay p {
+        font-size: 1rem; /* Трохи менший опис */
+    }
+
+    /* 2. Перебудовуємо сітку "Про нас" в одну колонку */
+    .about-grid {
+        grid-template-columns: 1fr; /* Було 1fr 1fr (дві), стала одна */
+        gap: 20px;
+    }
+
+    /* 3. Змінюємо порядок: спочатку текст, потім фото (або навпаки) */
+    .about-text {
+        order: 1; /* Текст зверху */
+    }
+    
+    .about-images {
+        order: 2; /* Картинки знизу */
+        flex-direction: column; /* Картинки одна під одною, а не поруч */
+    }
+    
+    .about-images .gallery-item {
+        width: 100%; /* Картинка на всю ширину */
+    }
+
+    /* 4. Адаптуємо шапку (Header) */
+    .header-content {
+        justify-content: space-between; 
+        align-items: center;
+        position: relative; /* Важливо для випадаючого меню */
+    }
+
+    .nav-links {
+        display: none; /* СПОЧАТКУ СХОВАНО! */
+        
+        /* Стилі для відкритого меню */
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        position: absolute;
+        top: 70px; /* Висота шапки */
+        left: 0;
+        background-color: #fff; /* Білий фон, щоб перекрити контент */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Тінь знизу */
+        padding: 20px 0;
+        z-index: 1000; /* Щоб меню було поверх всього */
+    }
+
+    .nav-links.active {
+        display: flex; 
+    }
+
+    .nav-links li {
+        margin: 15px 0;
+    }
+    
+    /* 5. Хроніка (щоб лінія не зїжджала) */
+    .timeline::after {
+        left: 31px; /* Трохи посунемо лінію */
+    }
+    
+    .timeline-item {
+        padding-left: 50px; /* Більше місця для тексту зліва */
+    }
+}

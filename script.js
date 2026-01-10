@@ -1,3 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Сайт Куреня ч. 11 завантажено успішно!");
-});
+const menuToggle = document.getElementById('mobile-menu');
+    const navLinks = document.querySelector('.nav-links');
+
+    menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
