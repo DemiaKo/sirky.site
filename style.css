@@ -421,8 +421,12 @@ main {
     .timeline::after {
         left: 31px; /* Трохи посунемо лінію */
     }
+
+    .timeline-item::after {
+        left: 21.5px; /* Було 10.5px, ми посунули на 11px вправо */
+    }
     
     .timeline-item {
-        padding-left: 50px; /* Більше місця для тексту зліва */
+        padding-left: 70px; 
     }
 }
