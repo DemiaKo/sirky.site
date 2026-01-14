@@ -78,8 +78,8 @@ main {
 
 .page-content { padding-top: 80px; }
 
-.hero-section {
-    background-image: url('hero-bg.jpg'); 
+.bg-section {
+    background-image: url('Background.jpg'); 
     background-size: cover;
     background-position: center;
     height: 100vh;
@@ -90,18 +90,18 @@ main {
     color: var(--white);
 }
 
-.hero-overlay { 
+.bg-overlay { 
     background: rgba(0, 0, 0, 0.5); 
     padding: 40px; 
     border-radius: 10px; 
 }
 
-.hero-overlay h1 { 
+.bg-overlay h1 { 
     font-size: 3rem; 
     margin-bottom: 20px; 
 }
 
-.hero-overlay p { 
+.bg-overlay p { 
     font-size: 1.5rem; 
     margin-bottom: 30px; 
 }
