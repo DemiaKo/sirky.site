@@ -60,7 +60,7 @@ export default async function handler(req, res) {
     }
 
     // --- КОМАНДА 1: ДОДАТИ ПОДІЮ ---
-    if (text.startsWith('/history ')) {
+    else if (text.startsWith('/history ')) {
         const rawContent = text.replace('/history ', '');
         const parts = rawContent.split('|');
 
