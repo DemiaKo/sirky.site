@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Тут використовуємо service_role ключ (з налаштувань Vercel), бо це адмінка
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const SUPER_ADMIN_ID = process.env.ADMIN_CHAT_ID;
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(200).send('Bot is active');
@@ -11,12 +12,51 @@ export default async function handler(req, res) {
 
     const chatId = body.message.chat.id;
     const text = body.message.text;
-    const myId = process.env.ADMIN_CHAT_ID;
-
-    // 🛡️ Перевірка: чи це ти?
-    if (String(chatId) !== String(myId)) {
-        await sendMessage(chatId, "⛔ Тобі сюди не можна.");
+    let isAdmin = String(chatId) === String(SUPER_ADMIN_ID);
+    if (!isAdmin) {
+        const { data } = await supabase
+            .from('admins')
+            .select('user_id')
+            .eq('user_id', chatId)
+            .single();
+        
+        if (data) isAdmin = true;
+    }
+    if (!isAdmin) {
+        if (text === '/my_id') {
+            await sendMessage(chatId, `Твій ID: <code>${chatId}</code>`);
+        } else {
+            await sendMessage(chatId, "⛔ Немає доступу. Напиши /my_id і скинь номер власнику.");
+        }
         return res.status(200).send('OK');
+    }
+
+    // Додати адміна (Тільки для тебе)
+    if (text.startsWith('/add_admin ')) {
+        if (String(chatId) !== String(SUPER_ADMIN_ID)) {
+            await sendMessage(chatId, "👮 Тільки головний може додавати адмінів.");
+            return res.status(200).send('OK');
+        }
+        // Розбиваємо "/add_admin 12345 Ім'я"
+        const params = text.replace('/add_admin ', '').trim().split(' ');
+        const newId = params[0];
+        const newName = params.slice(1).join(' '); 
+
+        if (!newId || !newName) {
+            await sendMessage(chatId, "⚠️ Формат: /add_admin ID Ім'я");
+        } else {
+            const { error } = await supabase.from('admins').insert([{ user_id: newId, name: newName }]);
+            if (!error) await sendMessage(chatId, `✅ Адміна ${newName} додано!`);
+            else await sendMessage(chatId, "Помилка: " + error.message);
+        }
+    }
+
+    // Показати список адмінів
+    else if (text === '/admins') {
+        const { data } = await supabase.from('admins').select('*');
+        let msg = "👥 **Адміни:**\n";
+        data.forEach(a => msg += `- ${a.name} (${a.user_id})\n`);
+        await sendMessage(chatId, msg);
     }
 
     // --- КОМАНДА 1: ДОДАТИ ПОДІЮ ---
