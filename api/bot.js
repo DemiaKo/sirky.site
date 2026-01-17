@@ -67,6 +67,41 @@ export default async function handler(req, res) {
             await sendMessage(newAdminId, "🎉 Тебе призначено адміністратором бота!");
         }
     }
+    // --- КОМАНДА: ВИДАЛИТИ АДМІНА ---
+    else if (text.startsWith('/delete_admin ')) {
+        // 1. Перевірка: чи це Супер-Адмін?
+        if (String(chatId) !== String(SUPER_ADMIN_ID)) {
+            await sendMessage(chatId, "⛔ Тільки власник може видаляти адмінів.");
+            return res.status(200).send('OK');
+        }
+
+        // 2. Отримуємо ID, який треба видалити
+        const targetId = text.replace('/delete_admin ', '').trim();
+
+        if (!targetId) {
+            await sendMessage(chatId, "⚠️ Вкажи ID. Приклад: /delete_admin 123456789");
+            return res.status(200).send('OK');
+        }
+
+        // 3. Видаляємо з бази
+        const { error } = await supabase
+            .from('admins')
+            .delete()
+            .eq('user_id', targetId); // Шукаємо саме по Telegram ID
+
+        if (error) {
+            await sendMessage(chatId, "❌ Помилка видалення: " + error.message);
+        } else {
+            await sendMessage(chatId, `🗑️ Користувача ${targetId} позбавлено прав адміна.`);
+            
+            // (Необов'язково) Спробувати повідомити користувача, що його видалили
+            try {
+                await sendMessage(targetId, "info: Тебе було видалено зі списку адміністраторів.");
+            } catch (e) {
+                // Якщо він заблокував бота, тут буде помилка, і ми її ігноруємо
+            }
+        }
+    }
 
     // КОМАНДА: Історія (доступна всім адмінам)
     else if (text.startsWith('/history ')) {
@@ -110,7 +145,7 @@ export default async function handler(req, res) {
     }
 
     else {
-        await sendMessage(chatId, "Вітаю, Адміне! 👋\n\nКоманди:\n/history ...\n/list\n/delete ID\n/add_admin ID Ім'я\n/admins");
+        await sendMessage(chatId, "Вітаю, Адміне! 👋\n\nКоманди:\n/history ...\n/list\n/delete ID\n/add_admin ID Ім'я\n/delete_admin ID\n/admins");
     }
 
     return res.status(200).send('OK');
