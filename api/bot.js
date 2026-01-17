@@ -122,7 +122,7 @@ export default async function handler(req, res) {
     else if (text === '/admins') {
         const { data } = await supabase.from('admins').select('*');
         let msg = "👥 **Список адмінів:**\n";
-        msg += `👑 Супер-Адмін (Ти)\n`;
+        msg += `👑 Супер-Адмін (Дем'ян)\n`;
         data.forEach(adm => {
             msg += `👤 ${adm.name} (ID: ${adm.user_id})\n`;
         });
