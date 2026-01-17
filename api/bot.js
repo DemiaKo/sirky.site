@@ -42,7 +42,7 @@ export default async function handler(req, res) {
     // КОМАНДА: Додати нового адміна (Тільки Супер-Адмін може це робити)
     if (text.startsWith('/add_admin ')) {
         if (String(chatId) !== String(SUPER_ADMIN_ID)) {
-            await sendMessage(chatId, "👮 Тільки головний адмін може додавати людей.");
+            await sendMessage(chatId, "👮 Тільки головний адмін може додавати адмінів.");
             return res.status(200).send('OK');
         }
 
@@ -71,7 +71,7 @@ export default async function handler(req, res) {
     else if (text.startsWith('/delete_admin ')) {
         // 1. Перевірка: чи це Супер-Адмін?
         if (String(chatId) !== String(SUPER_ADMIN_ID)) {
-            await sendMessage(chatId, "⛔ Тільки власник може видаляти адмінів.");
+            await sendMessage(chatId, "👮 Тільки головний адмін може видаляти адмінів.");
             return res.status(200).send('OK');
         }
 
@@ -122,7 +122,7 @@ export default async function handler(req, res) {
     else if (text === '/admins') {
         const { data } = await supabase.from('admins').select('*');
         let msg = "👥 **Список адмінів:**\n";
-        msg += `👑 Супер-Адмін (Дем'ян)\n`;
+        msg += `👑 Супер-Адмін (@Dem_Ko)\n`;
         data.forEach(adm => {
             msg += `👤 ${adm.name} (ID: ${adm.user_id})\n`;
         });
@@ -131,17 +131,42 @@ export default async function handler(req, res) {
 
     // КОМАНДА: Перегляд списку історії
     else if (text === '/list') {
-         // ... Твій код для списку ...
-         // Скопіюй з попередньої версії
+        const { data, error } = await supabase
+            .from('history')
+            .select('id, year, title') // Беремо тільки головне
+            .order('year', { ascending: false }); // Спочатку нові
+
+        if (error) {
+            await sendMessage(chatId, "❌ Помилка: " + error.message);
+        } else if (data.length === 0) {
+            await sendMessage(chatId, "📭 Історія пуста.");
+        } else {
+            // Формуємо красивий список
+            let msg = "📜 **Список подій:**\n\n";
+            data.forEach(item => {
+                // Виводимо: ID - РІК - НАЗВА
+                msg += `🆔 <b>${item.id}</b> | ${item.year} | ${item.title}\n`;
+            });
+            msg += "\nЩоб видалити: /delete ID";
+            await sendMessage(chatId, msg);
+        }
     }
     
     // КОМАНДА: Видалення
     else if (text.startsWith('/delete ')) {
-         // ... Твій код для видалення ...
-         // Скопіюй з попередньої версії
-         const idToDelete = text.replace('/delete ', '').trim();
-         const { error } = await supabase.from('history').delete().eq('id', idToDelete);
-         if (!error) await sendMessage(chatId, "🗑️ Видалено.");
+        const idToDelete = text.replace('/delete ', '').trim();
+
+        // Видаляємо з бази
+        const { error } = await supabase
+            .from('history')
+            .delete()
+            .eq('id', idToDelete);
+
+        if (error) {
+            await sendMessage(chatId, "❌ Не вдалося видалити: " + error.message);
+        } else {
+            await sendMessage(chatId, `🗑️ Запис ID ${idToDelete} видалено назавжди.`);
+        }
     }
 
     else {
